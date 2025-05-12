@@ -5,7 +5,7 @@ import Register from '../pages/Register';
 import AdminDashboard from '../pages/dashboards/AdminDashboard';
 import LocatarioDashboard from '../pages/dashboards/LocatarioDashboard';
 import CompradorDashboard from '../pages/dashboards/CompradorDashboard';
-import DeliveryDashboard from '../pages/dashboards/DeliveryDashboard';
+import RepartidorDashboard from '../pages/dashboards/RepartidorDashboard';
 
 export default function AppRouter() {
   return (
@@ -16,7 +16,7 @@ export default function AppRouter() {
       <Route path="/admin" element={<AdminDashboard />} />
       <Route path="/locatario" element={<LocatarioDashboard />} />
       <Route path="/comprador" element={<CompradorDashboard />} />
-      <Route path="/delivery" element={<DeliveryDashboard />} />
+      <Route path="/repartidor" element={<RepartidorDashboard />} />
     </Routes>
   );
 }
