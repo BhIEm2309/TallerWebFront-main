@@ -2,17 +2,29 @@ import React, { useState } from 'react';
 import './Register.css';
 
 const Register = () => {
+  const [tipoUsuario, setTipoUsuario] = useState('');
   const [nombre, setNombre] = useState('');
+  const [apellido, setApellido] = useState('');
   const [correo, setCorreo] = useState('');
   const [clave, setClave] = useState('');
   const [confirmarClave, setConfirmarClave] = useState('');
-  const [rol, setRol] = useState('');
+  const [pais, setPais] = useState('');
+  const [ciudad, setCiudad] = useState('');
+  const [numeroTelefono, setNumeroTelefono] = useState('');
+
+  // Campos específicos
+  const [nombreUsuario, setNombreUsuario] = useState('');
+  const [numeroCasaDepto, setNumeroCasaDepto] = useState('');
+  const [nombreLocal, setNombreLocal] = useState('');
+  const [numeroLocal, setNumeroLocal] = useState('');
+  const [vehiculo, setVehiculo] = useState('');
+  const [patente, setPatente] = useState('');
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!nombre || !correo || !clave || !confirmarClave || !rol) {
-      alert('Completa todos los campos');
+    if (!tipoUsuario || !nombre || !apellido || !correo || !clave || !confirmarClave || !pais || !ciudad || !numeroTelefono) {
+      alert('Completa todos los campos obligatorios');
       return;
     }
 
@@ -21,8 +33,49 @@ const Register = () => {
       return;
     }
 
-    alert(`Registro simulado:\nNombre: ${nombre}\nCorreo: ${correo}\nRol: ${rol}`);
-    // Aquí podrías enviar los datos a tu backend/API
+    if (tipoUsuario === 'usuario' && (!nombreUsuario || !numeroCasaDepto)) {
+      alert('Faltan datos específicos del usuario');
+      return;
+    }
+
+    if (tipoUsuario === 'locatario' && (!nombreLocal || !numeroLocal)) {
+      alert('Faltan datos específicos del locatario');
+      return;
+    }
+
+    if (tipoUsuario === 'repartidor' && (!nombreUsuario || !vehiculo || !patente)) {
+      alert('Faltan datos específicos del repartidor');
+      return;
+    }
+
+    const datos = {
+      tipoUsuario,
+      nombre,
+      apellido,
+      correo,
+      contraseña: clave,
+      pais,
+      ciudad,
+      numeroTelefono,
+      ...(tipoUsuario === 'usuario' && {
+        nombreUsuario,
+        numeroCasaDepto,
+      }),
+      ...(tipoUsuario === 'locatario' && {
+        nombreLocal,
+        numeroLocal,
+        comidasStock: [],
+        ventas: [],
+      }),
+      ...(tipoUsuario === 'repartidor' && {
+        nombreUsuario,
+        vehiculo,
+        patente,
+      }),
+    };
+
+    console.log('Datos listos para enviar:', datos);
+    alert(`Registro simulado para tipo ${tipoUsuario}`);
   };
 
   return (
@@ -35,52 +88,52 @@ const Register = () => {
 
           <h2>Crea tu cuenta</h2>
 
-          <input
-            type="text"
-            placeholder="Nombre completo"
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
-            className="register-input"
-          />
+          {/* Campos comunes */}
+          <input className="register-input" type="text" placeholder="Nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} />
+          <input className="register-input" type="text" placeholder="Apellido" value={apellido} onChange={(e) => setApellido(e.target.value)} />
+          <input className="register-input" type="email" placeholder="Correo electrónico" value={correo} onChange={(e) => setCorreo(e.target.value)} />
+          <input className="register-input" type="password" placeholder="Contraseña" value={clave} onChange={(e) => setClave(e.target.value)} />
+          <input className="register-input" type="password" placeholder="Confirmar contraseña" value={confirmarClave} onChange={(e) => setConfirmarClave(e.target.value)} />
+          <input className="register-input" type="text" placeholder="País" value={pais} onChange={(e) => setPais(e.target.value)} />
+          <input className="register-input" type="text" placeholder="Ciudad" value={ciudad} onChange={(e) => setCiudad(e.target.value)} />
+          <input className="register-input" type="text" placeholder="Número de teléfono" value={numeroTelefono} onChange={(e) => setNumeroTelefono(e.target.value)} />
 
-          <input
-            type="email"
-            placeholder="Correo electrónico"
-            value={correo}
-            onChange={(e) => setCorreo(e.target.value)}
-            className="register-input"
-          />
-
-          <input
-            type="password"
-            placeholder="Contraseña"
-            value={clave}
-            onChange={(e) => setClave(e.target.value)}
-            className="register-input"
-          />
-
-          <input
-            type="password"
-            placeholder="Confirmar contraseña"
-            value={confirmarClave}
-            onChange={(e) => setConfirmarClave(e.target.value)}
-            className="register-input"
-          />
-
-          <select
-            value={rol}
-            onChange={(e) => setRol(e.target.value)}
-            className="register-input"
-          >
-            <option value="">Selecciona tu rol</option>
-            <option value="comprador">Comprador</option>
+          {/* Tipo de usuario */}
+          <select className="register-input" value={tipoUsuario} onChange={(e) => setTipoUsuario(e.target.value)}>
+            <option value="">Selecciona tu tipo de usuario</option>
+            <option value="usuario">Comprador</option>
             <option value="locatario">Locatario</option>
             <option value="repartidor">Repartidor</option>
           </select>
 
-          <button type="submit" className="register-button">
-            Registrarse
-          </button>
+          {/* Campos específicos */}
+          {tipoUsuario === 'usuario' && (
+            <>
+              <input className="register-input" type="text" placeholder="Nombre de usuario" value={nombreUsuario} onChange={(e) => setNombreUsuario(e.target.value)} />
+              <input className="register-input" type="text" placeholder="Número de casa o depto" value={numeroCasaDepto} onChange={(e) => setNumeroCasaDepto(e.target.value)} />
+            </>
+          )}
+
+          {tipoUsuario === 'locatario' && (
+            <>
+              <input className="register-input" type="text" placeholder="Nombre del local" value={nombreLocal} onChange={(e) => setNombreLocal(e.target.value)} />
+              <input className="register-input" type="text" placeholder="Número del local" value={numeroLocal} onChange={(e) => setNumeroLocal(e.target.value)} />
+            </>
+          )}
+
+          {tipoUsuario === 'repartidor' && (
+            <>
+              <input className="register-input" type="text" placeholder="Nombre de usuario" value={nombreUsuario} onChange={(e) => setNombreUsuario(e.target.value)} />
+              <select className="register-input" value={vehiculo} onChange={(e) => setVehiculo(e.target.value)}>
+                <option value="">Selecciona tu vehículo</option>
+                <option value="auto">Auto</option>
+                <option value="moto">Moto</option>
+              </select>
+              <input className="register-input" type="text" placeholder="Patente del vehículo" value={patente} onChange={(e) => setPatente(e.target.value)} />
+            </>
+          )}
+
+          <button type="submit" className="register-button">Registrarse</button>
         </form>
       </div>
     </div>
