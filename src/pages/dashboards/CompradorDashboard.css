@@ -1,128 +1,176 @@
 .comprador-dashboard {
-    font-family: Arial, sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  /* Navbar superior */
-  .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #d87a9c;
-    color: white;
-    padding: 1rem 2rem;
-  }
-  
-  .navbar .logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-  }
-  
-  .nav-options button {
-    margin-left: 1rem;
-    padding: 0.5rem 1rem;
-    border: none;
-    background: white;
-    color: #d87a9c;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .dashboard-body {
-    display: flex;
-    padding: 2rem;
-    gap: 2rem;
-  }
-  
-  /* Zona principal de productos */
-  .productos-section {
-    flex: 3;
-    padding-right: 2rem;
-  }
-  
-  .productos-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-top: 1rem;
-  }
-  
-  .producto-card {
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    width: 200px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    overflow: hidden;
-    text-align: center;
-  }
-  
-  .producto-card img {
-    width: 100%;
-    height: 140px;
-    object-fit: cover;
-  }
-  
-  .producto-card h3 {
-    margin: 0.5rem 0;
-    color: #333;
-  }
-  
-  .producto-card button {
-    background-color: #d87a9c;
-    color: white;
-    border: none;
-    padding: 0.5rem;
-    width: 100%;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  
-  .producto-card button:hover {
-    background-color: #c76988;
-  }
-  
-  /* Barra lateral */
-  .sidebar {
-    flex: 1;
-    background-color: #ee72728a;
-    padding: 1rem;
-    border-radius: 10px;
-    height: fit-content;
-  }
-  
-  .sidebar input {
-    width: 90%;
-    padding: 0.5rem;
-    margin: 0.5rem 0 1rem 0;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-  }
-  
-  .lista-locales {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .lista-locales li {
-    margin-bottom: 0.5rem;
-  }
-  
-  .lista-locales button {
-    width: 100%;
-    padding: 0.5rem;
-    background-color: white;
-    border: 1px solid #d87a9c;
-    border-radius: 5px;
-    color: #d87a9c;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  
-  .lista-locales button:hover {
-    background-color: #d87a9c;
-    color: white;
-  }
-  
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Barra superior optimizada y dividida */
+.navbar-opt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 2px 12px rgba(216, 122, 156, 0.08);
+  padding: 0.8rem 2rem;
+  margin-bottom: 2rem;
+  min-height: 70px;
+  gap: 2rem;
+}
+
+.navbar-section {
+  display: flex;
+  align-items: center;
+}
+
+.logo-section .logo {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #d87a9c;
+  letter-spacing: 1px;
+}
+
+.search-section {
+  flex: 1;
+  justify-content: center;
+}
+
+.search-input {
+  width: 350px;
+  padding: 0.7rem 1.2rem;
+  border-radius: 20px;
+  border: 1.5px solid #d87a9c;
+  font-size: 1rem;
+  color: #333;
+  background: #f9f9f9;
+  transition: box-shadow 0.2s, border-color 0.2s;
+  outline: none;
+}
+
+.search-input:focus {
+  border-color: #b05c7a;
+  box-shadow: 0 0 6px #d87a9c33;
+}
+
+.icons-section {
+  gap: 1rem;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.3rem;
+  border-radius: 50%;
+  transition: background 0.2s;
+  margin-left: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-btn:hover {
+  background: #f2c94c33;
+}
+
+.icon-btn img {
+  width: 28px;
+  height: 28px;
+}
+
+/* Cuerpo del dashboard */
+.dashboard-body {
+  display: flex;
+  padding: 2rem;
+  gap: 2rem;
+}
+
+/* Zona principal de productos */
+.productos-section {
+  flex: 3;
+  padding-right: 2rem;
+}
+
+.productos-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.producto-card {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  width: 200px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  overflow: hidden;
+  text-align: center;
+}
+
+.producto-card img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+}
+
+.producto-card h3 {
+  margin: 0.5rem 0;
+  color: #333;
+}
+
+.producto-card button {
+  background-color: #d87a9c;
+  color: white;
+  border: none;
+  padding: 0.5rem;
+  width: 100%;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.producto-card button:hover {
+  background-color: #c76988;
+}
+
+/* Barra lateral */
+.sidebar {
+  flex: 1;
+  background-color: #ee72728a;
+  padding: 1rem;
+  border-radius: 10px;
+  height: fit-content;
+}
+
+.sidebar input {
+  width: 90%;
+  padding: 0.5rem;
+  margin: 0.5rem 0 1rem 0;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.lista-locales {
+  list-style: none;
+  padding: 0;
+}
+
+.lista-locales li {
+  margin-bottom: 0.5rem;
+}
+
+.lista-locales button {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: white;
+  border: 1px solid #d87a9c;
+  border-radius: 5px;
+  color: #d87a9c;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.lista-locales button:hover {
+  background-color: #d87a9c;
+  color: white;
+}

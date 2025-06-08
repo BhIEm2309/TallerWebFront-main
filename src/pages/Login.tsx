@@ -1,37 +1,75 @@
 import React, { useState } from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
+import { useMutation } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import './Login.css';
 
-const Login = () => {
-  const { loginWithRedirect } = useAuth0();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+const loginUser = async (datos: { correo: string; clave: string }) => {
+  const response = await fetch('http://localhost:3000/usuarios/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(datos),
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Error en el login');
+  }
+  return response.json();
+};
 
-  const handleCustomLogin = (e: React.FormEvent) => {
+const Login = () => {
+  const [correo, setCorreo] = useState('');
+  const [clave, setClave] = useState('');
+  const navigate = useNavigate();
+
+  const mutation = useMutation({
+    mutationFn: loginUser,
+    onSuccess: (data) => {
+      localStorage.setItem('token', data.access_token);
+      localStorage.setItem('tipoUsuario', data.tipoUsuario);
+        // Mapeo de tipoUsuario a ruta
+      const rutasPorTipo: Record<string, string> = {
+        usuario: '/comprador',
+        locatario: '/locatario',
+        repartidor: '/repartidor',
+        admin: '/admin',
+      };
+
+      const ruta = rutasPorTipo[data.tipoUsuario];
+      if (ruta) {
+        navigate(ruta);
+      } else {
+        alert('Tipo de usuario desconocido');
+      }
+      },
+      onError: (error: any) => {
+        alert('Error en el login: ' + error.message);
+      },
+  });
+
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (username && password) {
-      alert(`Login simulado para ${username}.`);
-      // Aquí podrías agregar validación contra un backend real en el futuro.
-    } else {
+    if (!correo || !clave) {
       alert('Por favor completa todos los campos.');
+      return;
     }
+    mutation.mutate({ correo, clave });
   };
 
   return (
     <div className="login-container">
       <div className="login-inner">
-        <form className="login-form" onSubmit={handleCustomLogin}>
+        <form className="login-form" onSubmit={handleLogin}>
           <div className="login-icon">
             <img src="https://img.icons8.com/ios-filled/100/ffffff/user.png" alt="User" />
           </div>
 
           <div className="input-group">
-            <span className="input-icon">👤</span>
+            <span className="input-icon">📧</span>
             <input
-              type="text"
-              placeholder="Nombre de usuario"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              type="email"
+              placeholder="Correo electrónico"
+              value={correo}
+              onChange={(e) => setCorreo(e.target.value)}
             />
           </div>
 
@@ -40,8 +78,8 @@ const Login = () => {
             <input
               type="password"
               placeholder="Contraseña"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={clave}
+              onChange={(e) => setClave(e.target.value)}
             />
           </div>
 
@@ -52,18 +90,16 @@ const Login = () => {
             </label>
             <a href="#">¿Olvidaste tu contraseña?</a>
           </div>
-
           <button type="submit" className="login-button">
             Iniciar sesión
           </button>
-
-          <hr className="login-separator" />
+          {/* Botón Volver */}
           <button
             type="button"
-            className="login-button auth0"
-            onClick={() => loginWithRedirect()}
+            className="login-button volver-button"
+            onClick={() => navigate('/')}
           >
-            Iniciar sesión con Auth0
+            ← Volver
           </button>
         </form>
       </div>

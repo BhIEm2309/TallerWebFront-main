@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './CompradorDashboard.css';
 
 const localesEjemplo = ['La Picá de Juan', 'Empanadas El Sol', 'Veggie Fresh', 'Pizzería Don Gusto'];
@@ -12,6 +13,7 @@ const productosEjemplo = [
 const CompradorDashboard: React.FC = () => {
   const [busqueda, setBusqueda] = useState('');
   const [localSeleccionado, setLocalSeleccionado] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const localesFiltrados = localesEjemplo.filter((l) =>
     l.toLowerCase().includes(busqueda.toLowerCase())
@@ -23,13 +25,27 @@ const CompradorDashboard: React.FC = () => {
 
   return (
     <div className="comprador-dashboard">
-      {/* Navegación superior */}
-      <nav className="navbar">
-        <div className="logo">VeciMarket</div>
-        <div className="nav-options">
-          <button>Mi cuenta</button>
-          <button>Carrito</button>
-          <button>Salir</button>
+      {/* Barra superior optimizada y dividida */}
+      <nav className="navbar-opt">
+        <div className="navbar-section logo-section">
+          <span className="logo">VeciMarket</span>
+        </div>
+        <div className="navbar-section search-section">
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Buscar locales o productos..."
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+          />
+        </div>
+        <div className="navbar-section icons-section">
+          <button className="icon-btn" onClick={() => navigate('/carrito')} title="Carrito">
+            <img src="https://img.icons8.com/ios-filled/28/d87a9c/shopping-cart.png" alt="Carrito" />
+          </button>
+          <button className="icon-btn" onClick={() => navigate('/perfil')} title="Perfil">
+            <img src="https://img.icons8.com/ios-filled/28/d87a9c/user.png" alt="Perfil" />
+          </button>
         </div>
       </nav>
 
@@ -38,12 +54,6 @@ const CompradorDashboard: React.FC = () => {
         {/* Barra lateral izquierda */}
         <aside className="sidebar">
           <h3>Buscar locales</h3>
-          <input
-            type="text"
-            placeholder="Buscar por nombre"
-            value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
-          />
           <ul className="lista-locales">
             {localesFiltrados.map((local, i) => (
               <li key={i}>
