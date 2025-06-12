@@ -3,8 +3,10 @@ import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
 const loginUser = async (datos: { correo: string; clave: string }) => {
-  const response = await fetch('http://localhost:3000/usuarios/login', {
+  const response = await fetch(`${API_URL}/usuarios/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(datos),
@@ -26,6 +28,15 @@ const Login = () => {
     onSuccess: (data) => {
       localStorage.setItem('token', data.access_token);
       localStorage.setItem('tipoUsuario', data.tipoUsuario);
+      // Guarda todo el usuario si viene en la respuesta
+      if (data.usuario) {
+        localStorage.setItem('usuario', JSON.stringify(data.usuario));
+        if (data.usuario._id) {
+          localStorage.setItem('userId', data.usuario._id);
+        }
+      } else if (data.userId) {
+        localStorage.setItem('userId', data.userId);
+      }
         // Mapeo de tipoUsuario a ruta
       const rutasPorTipo: Record<string, string> = {
         usuario: '/comprador',

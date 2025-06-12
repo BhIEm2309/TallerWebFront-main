@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import './LocatarioDashboard.css';
 
+// Cambia la interfaz Producto para reflejar el id real de MongoDB
 interface Producto {
-  id: number;
+  _id: string;
   nombre: string;
   categoria: string;
   ingredientes: string;
@@ -11,9 +12,17 @@ interface Producto {
   imagen: string;
 }
 
+// Cambia el estado de categorías a objetos con _id y nombre
+interface Categoria {
+  _id: string;
+  nombre: string;
+}
+
+const API_URL = import.meta.env.VITE_API_URL_LOCATARIOS || 'http://localhost:3001';
+
 const LocatarioDashboard: React.FC = () => {
   const [productos, setProductos] = useState<Producto[]>([]);
-  const [categorias, setCategorias] = useState<string[]>([]);
+  const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [formulario, setFormulario] = useState({
     nombre: '',
     categoria: '',
@@ -28,6 +37,48 @@ const LocatarioDashboard: React.FC = () => {
   const [mostrarCrearCategoria, setMostrarCrearCategoria] = useState(false);
   const [formCategoria, setFormCategoria] = useState('');
   const [productoEditando, setProductoEditando] = useState<Producto | null>(null);
+
+  // Usa el id correcto del locatario guardado en localStorage
+  const locatarioId = localStorage.getItem('userId');
+
+  // Carga categorías desde el backend como objetos
+  React.useEffect(() => {
+    if (!locatarioId) return;
+    fetch(`${API_URL}/categorias?locatario=${locatarioId}`)
+      .then(res => res.json())
+      .then(data => setCategorias(data))
+      .catch(() => setCategorias([]));
+  }, [locatarioId]);
+
+  // Carga productos desde el backend al montar el componente o cuando cambia el locatarioId
+  React.useEffect(() => {
+    if (!locatarioId) return;
+    fetch(`${API_URL}/productos?locatario=${locatarioId}`)
+      .then(res => res.json())
+      .then(data => {
+        // Normaliza la propiedad de imagen
+        setProductos(
+          data.map((prod: any) => ({
+            ...prod,
+            imagen: prod.imagenUrl || '',
+            categoria: prod.categoria._id || prod.categoria // Soporta populate o id plano
+          }))
+        );
+      })
+      .catch(() => setProductos([]));
+  }, [locatarioId]);
+
+  // Subida de imagen a imgbb (puedes poner tu propia API key de imgbb)
+  const uploadImage = async (file: File) => {
+    const formData = new FormData();
+    formData.append('image', file);
+    const res = await fetch('https://api.imgbb.com/1/upload?key=TU_API_KEY', {
+      method: 'POST',
+      body: formData,
+    });
+    const data = await res.json();
+    return data.data.url;
+  };
 
   // Handlers
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,56 +102,145 @@ const LocatarioDashboard: React.FC = () => {
     }
   };
 
-  const handleAgregarProducto = (e: React.FormEvent) => {
+  const handleAgregarProducto = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { nombre, categoria, precio, imagen } = formulario;
-    if (!nombre || !categoria || !precio || !imagen) {
+    const { nombre, categoria, precio } = formulario;
+    if (!nombre || !categoria || !precio) {
       alert('Por favor completa todos los campos obligatorios');
       return;
     }
-
-    const nuevoProducto: Producto = {
-      id: Date.now(),
+    if (!locatarioId) {
+      alert('No se encontró el id del locatario');
+      return;
+    }
+    let imagenUrl = '';
+    if (imagenFile) {
+      try {
+        imagenUrl = await uploadImage(imagenFile);
+      } catch (err) {
+        alert('Error al subir la imagen. El producto se guardará sin imagen.');
+      }
+    }
+    const body = {
       nombre,
       categoria,
       ingredientes: formulario.ingredientes,
       descripcion: formulario.descripcion,
       precio: parseFloat(precio),
-      imagen,
+      imagenUrl, // este campo es el que espera el backend
+      locatario: locatarioId,
     };
-
-    setProductos([...productos, nuevoProducto]);
-    limpiarFormulario();
-    setMostrarFormulario(false);
+    const res = await fetch(`${API_URL}/productos/crear`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    if (res.ok) {
+      // Recarga productos desde el backend para reflejar la imagen real
+      fetch(`${API_URL}/productos?locatario=${locatarioId}`)
+        .then(res => res.json())
+        .then(data => {
+          setProductos(
+            data.map((prod: any) => ({
+              ...prod,
+              imagen: prod.imagenUrl || '',
+              categoria: prod.categoria._id || prod.categoria
+            }))
+          );
+        });
+      limpiarFormulario();
+      setMostrarFormulario(false);
+    } else {
+      alert('Error al agregar producto');
+    }
   };
 
-  const handleGuardarEdicion = (e: React.FormEvent) => {
+  // Eliminar producto en backend
+  const handleEliminarProducto = async (id: string) => {
+    if (!window.confirm('¿Estás seguro de que quieres eliminar este producto?')) return;
+    const res = await fetch(`${API_URL}/productos/${id}`, { method: 'DELETE' });
+    if (res.ok) {
+      // Elimina el producto del estado local sin recargar toda la lista
+      setProductos(productos.filter((p) => p._id !== id));
+    } else {
+      alert('Error al eliminar producto');
+    }
+  };
+
+  // Editar producto en backend
+  const handleGuardarEdicion = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!productoEditando) return;
-
-    const productosActualizados = productos.map((p) =>
-      p.id === productoEditando.id
-        ? {
-            ...productoEditando,
-            nombre: formulario.nombre,
-            categoria: formulario.categoria,
-            ingredientes: formulario.ingredientes,
-            descripcion: formulario.descripcion,
-            precio: parseFloat(formulario.precio),
-            imagen: formulario.imagen,
-          }
-        : p
-    );
-
-    setProductos(productosActualizados);
-    limpiarFormulario();
-    setProductoEditando(null);
+    let imagenUrl = formulario.imagen;
+    // Si el usuario subió una nueva imagen, súbela a tu backend GridFS
+    if (imagenFile) {
+      try {
+        const formData = new FormData();
+        formData.append('file', imagenFile);
+        const resImg = await fetch(`${API_URL}/imagenes/upload`, {
+          method: 'POST',
+          body: formData,
+        });
+        const dataImg = await resImg.json();
+        imagenUrl = `/imagenes/${dataImg.fileId}`;
+      } catch (err) {
+        alert('Error al subir la imagen. Se mantendrá la anterior.');
+      }
+    }
+    const body = {
+      nombre: formulario.nombre,
+      categoria: formulario.categoria,
+      ingredientes: formulario.ingredientes,
+      descripcion: formulario.descripcion,
+      precio: parseFloat(formulario.precio),
+      imagenUrl, // este campo es el que espera el backend
+      locatario: locatarioId,
+    };
+    const res = await fetch(`${API_URL}/productos/${productoEditando._id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (res.ok) {
+      // Recarga productos desde el backend para reflejar la imagen real
+      fetch(`${API_URL}/productos?locatario=${locatarioId}`)
+        .then(res => res.json())
+        .then(data => {
+          setProductos(
+            data.map((prod: any) => ({
+              ...prod,
+              imagen: prod.imagenUrl || '',
+              categoria: prod.categoria._id || prod.categoria
+            }))
+          );
+        });
+      limpiarFormulario();
+      setProductoEditando(null);
+    } else {
+      alert('Error al editar producto');
+    }
   };
 
-  const handleEliminarProducto = (id: number) => {
-    const confirmado = confirm('¿Estás seguro de que quieres eliminar este producto?');
-    if (confirmado) {
-      setProductos(productos.filter((p) => p.id !== id));
+  // Crear categoría en backend
+  const handleCrearCategoria = async () => {
+    const nueva = formCategoria.trim();
+    if (!nueva || categorias.find(cat => cat.nombre === nueva)) return;
+    if (!locatarioId) {
+      alert('No se encontró el id del locatario');
+      return;
+    }
+    const res = await fetch(`${API_URL}/categorias/crear`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombre: nueva, locatario: locatarioId })
+    });
+    if (res.ok) {
+      const cat = await res.json();
+      setCategorias([...categorias, cat]);
+      setFormCategoria('');
+      setMostrarCrearCategoria(false);
+    } else {
+      alert('Error al crear categoría');
     }
   };
 
@@ -117,8 +257,8 @@ const LocatarioDashboard: React.FC = () => {
   };
 
   const productosPorCategoria = categorias.map((cat) => ({
-    categoria: cat,
-    productos: productos.filter((p) => p.categoria === cat),
+    categoria: cat.nombre,
+    productos: productos.filter((p) => p.categoria === cat._id),
   })).filter((g) => g.productos.length > 0);
 
   return (
@@ -139,7 +279,7 @@ const LocatarioDashboard: React.FC = () => {
             <h3>{categoria}</h3>
             <div className="grid-productos">
               {productos.map((producto) => (
-                <div className="card-producto" key={producto.id}>
+                <div className="card-producto" key={producto._id}>
                   <img src={producto.imagen} alt={producto.nombre} />
                   <h4>{producto.nombre}</h4>
                   <p className="precio">${producto.precio}</p>
@@ -163,7 +303,7 @@ const LocatarioDashboard: React.FC = () => {
                     Editar
                   </button>
                   <button
-                    onClick={() => handleEliminarProducto(producto.id)}
+                    onClick={() => handleEliminarProducto(producto._id)}
                     className="btn-eliminar"
                   >
                     🗑 Eliminar
@@ -186,7 +326,7 @@ const LocatarioDashboard: React.FC = () => {
             <select name="categoria" value={formulario.categoria} onChange={handleSelectChange}>
               <option value="">Selecciona una categoría</option>
               {categorias.map((cat) => (
-                <option key={cat} value={cat}>{cat}</option>
+                <option key={cat._id} value={cat._id}>{cat.nombre}</option>
               ))}
             </select>
             <textarea name="ingredientes" placeholder="Ingredientes" value={formulario.ingredientes} onChange={handleTextareaChange} />
@@ -208,7 +348,7 @@ const LocatarioDashboard: React.FC = () => {
             <select name="categoria" value={formulario.categoria} onChange={handleSelectChange}>
               <option value="">Selecciona una categoría</option>
               {categorias.map((cat) => (
-                <option key={cat} value={cat}>{cat}</option>
+                <option key={cat._id} value={cat._id}>{cat.nombre}</option>
               ))}
             </select>
             <textarea name="ingredientes" placeholder="Ingredientes" value={formulario.ingredientes} onChange={handleTextareaChange} />
@@ -233,14 +373,7 @@ const LocatarioDashboard: React.FC = () => {
               onChange={(e) => setFormCategoria(e.target.value)}
             />
             <button
-              onClick={() => {
-                const nueva = formCategoria.trim();
-                if (nueva && !categorias.includes(nueva)) {
-                  setCategorias([...categorias, nueva]);
-                  setFormCategoria('');
-                  setMostrarCrearCategoria(false);
-                }
-              }}
+              onClick={handleCrearCategoria}
             >
               Crear
             </button>

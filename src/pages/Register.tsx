@@ -24,25 +24,25 @@ const Register = () => {
 
   const navigate = useNavigate();
 
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
   const registerUser = async (datos: any) => {
-  try {
-    const response = await fetch('http://localhost:3000/usuarios/registro', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(datos),
-    });
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Error en el registro');
+    try {
+      const response = await fetch(`${API_URL}/usuarios/registro`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(datos),
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Error en el registro');
+      }
+      return response.json();
+    } catch (err: any) {
+      // Puedes personalizar el mensaje de error aquí si quieres
+      throw new Error(err.message || 'Error de conexión');
     }
-    return response.json();
-  } catch (err: any) {
-    // Puedes personalizar el mensaje de error aquí si quieres
-    throw new Error(err.message || 'Error de conexión');
-  }
-};
-
+  };
 
   const mutation = useMutation({
     mutationFn: registerUser,
@@ -109,7 +109,6 @@ const Register = () => {
     };
     mutation.mutate(datos);
     console.log('Datos listos para enviar:', datos);
-    alert(`Registro simulado para tipo ${tipoUsuario}`);
   };
 
   return (
