@@ -1,68 +1,61 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth0 } from '@auth0/auth0-react';
+import { Link } from 'react-router-dom';
 import './Home.css';
 
 const Home: React.FC = () => {
-  const navigate = useNavigate();
-  const { isAuthenticated } = useAuth0();
-
   return (
     <div className="home-container">
-      <div className="home-inner">
-        <header className="home-header">
-          <div className="home-text">
-            <h1>Bienvenido a la Plataforma Vecinal</h1>
-            <p>Conecta con tu comunidad. Compra, vende, reparte y gestiona desde un solo lugar.</p>
-            {!isAuthenticated && (
-              <div className="home-buttons">
-                <button onClick={() => navigate('/login')}>Iniciar Sesión</button>
-                <button onClick={() => navigate('/register')}>Registrarse</button>
-              </div>
-            )}
+      {/* Banner superior */}
+      <div className="top-banner">
+        <span className="top-banner-text">
+          Bienvenido a VeciMarket - Tu mercado vecinal digital
+        </span>
+      </div>
+
+      {/* Cabecera */}
+      <div className="home-header-card">
+        <h1 className="home-title">VeciMarket</h1>
+        <p className="home-subtitle">Tu mercado vecinal online</p>
+        <p className="home-subtitle">Compra local, apoya a tu comunidad</p>
+      </div>
+
+      {/* Cards */}
+      <div className="card-grid">
+        <div className="home-card">
+          <h2>¿Ya tienes cuenta?</h2>
+          <p>Accede a tu perfil y continúa comprando local.</p>
+          <Link to="/login" className="card-button">Iniciar sesión</Link>
+        </div>
+
+        <div className="home-card">
+          <h2>¿Eres nuevo?</h2>
+          <p>Únete a nuestra comunidad y apoya el comercio del barrio.</p>
+          <Link to="/register" className="card-button">Registrarse</Link>
+        </div>
+      </div>
+
+      {/* Info con imagen y texto */}
+      <div className="info-card">
+        <div className="info-section">
+          <div className="info-text">
+            Esta plataforma conecta a compradores, locatarios y repartidores de un mismo vecindario.
+            Nuestro objetivo es digitalizar el comercio de barrio, facilitar el acceso a productos locales,
+            mejorar la visibilidad de pequeños emprendedores y fomentar una logística colaborativa.
+            <br /><br />
+            Todo desde una aplicación simple, cercana y hecha a medida de nuestra comunidad.
           </div>
-          <img
-            src="https://img.freepik.com/free-photo/happy-african-american-woman-office_53876-137857.jpg"
-            alt="Bienvenida"
-          />
-        </header>
+          <div className="info-image">
+            <img
+              src="https://img.freepik.com/vector-gratis/edificio-tiendas-vectores-dibujos-animados-calle-ciudad-vista-rascacielos-urbanos-ilustracion-isometrica-apartamentos-cerca-tranvia-ciudad-nadie-dia-soleado-arquitectura-juegos-retro-papel-tapiz-grafico-2d_107791-22114.jpg"
+              alt="Ilustración mercado vecinal"
+            />
+          </div>
+        </div>
+      </div>
 
-        {/* Mostrar el resto solo si está autenticado */}
-        {isAuthenticated && (
-          <>
-            <section className="home-categories">
-              <div className="section-box">
-                <h2>¿Qué quieres hacer?</h2>
-                <div className="category-grid">
-                  <div className="category-card">🛒 Comprar Productos</div>
-                  <div className="category-card">🏪 Vender como Locatario</div>
-                  <div className="category-card">🚴 Repartir Pedidos</div>
-                  <div className="category-card">📊 Ver Gestión Vecinal</div>
-                </div>
-              </div>
-            </section>
-
-            <section className="home-info">
-              <div className="section-box">
-                <h2>¿Por qué usar esta plataforma?</h2>
-                <div className="info-cards">
-                  <div className="info-card">
-                    <h3>Impulsa el comercio local</h3>
-                    <p>Da visibilidad a las tiendas pequeñas de tu vecindario y equilibra las oportunidades de venta.</p>
-                  </div>
-                  <div className="info-card">
-                    <h3>Fácil y seguro</h3>
-                    <p>Compra y vende sin complicaciones, con métodos de pago confiables y soporte vecinal.</p>
-                  </div>
-                  <div className="info-card">
-                    <h3>Logística conectada</h3>
-                    <p>Repartidores en tiempo real para que tus pedidos lleguen rápido y sin problemas.</p>
-                  </div>
-                </div>
-              </div>
-            </section>
-          </>
-        )}
+      {/* Footer */}
+      <div className="home-footer">
+        <p className="footer-text">VeciMarket © 2025 · Proyecto universitario para fomentar el comercio local.</p>
       </div>
     </div>
   );

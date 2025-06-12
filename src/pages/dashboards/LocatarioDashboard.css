@@ -1,161 +1,427 @@
-/* BARRA SUPERIOR */
-.navbar {
+/* Variables de color de tu home/login/register/comprador */
+:root {
+  --color-dark-brown: #532a14; /* Color del banner superior (el fondo principal) */
+  --color-light-orange-gradient-start: #fef4e8; /* Color pastel (para el fondo principal de la página) */
+  --color-card-bg-light: #fff8f2; /* Fondo de tarjetas claras (la register-card exterior) */
+  --color-title-brown: #6b3e26; /* Color de títulos principales */
+  --color-subtitle-orange: #8d5c3d; /* Color de subtítulos y botones principales */
+  --color-card-border: #d1a38d; /* Borde de las tarjetas y inputs */
+  --color-text-brown-dark: #5a3a28; /* Texto oscuro en cards */
+  --color-text-brown-light: #7a5540; /* Texto más claro en cards */
+  --color-info-text: #6d4b3c; /* Color del texto de info */
+  --color-card-shadow: rgba(0,0,0,0.08); /* Sombra de cards */
+  --color-general-shadow: rgba(0,0,0,0.05); /* Sombra más suave */
+  --color-error: #e65f5f; /* Rojo para errores */
+}
+
+/* Reglas globales para el fondo y la fuente */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--color-text-brown-dark);
+}
+
+/* Contenedor principal de la página de locatario */
+.locatario-dashboard {
+  width: 100vw;
+  min-height: 100vh;
+  background-color: var(--color-light-orange-gradient-start); /* Fondo general pastel */
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: center; /* Centra el contenido horizontalmente */
+}
+
+/* Barra superior (Navbar) */
+.navbar {
+  width: 100%;
+  max-width: 1200px; /* Limita el ancho como en comprador dashboard */
+  display: flex;
   align-items: center;
-  background-color: #d87a9c;
+  justify-content: space-between;
+  background-color: var(--color-dark-brown); /* Fondo café oscuro */
   color: white;
-  padding: 1rem 2rem;
+  padding: 0.8rem 2rem;
+  border-radius: 0 0 16px 16px; /* Bordes inferiores redondeados */
+  box-shadow: 0 4px 12px var(--color-card-shadow);
+  margin-bottom: 2rem;
+  min-height: 70px;
+  gap: 2rem;
+  box-sizing: border-box;
 }
 
 .navbar .logo {
-  font-size: 1.5rem;
+  font-size: 2rem; /* Más grande como en comprador */
   font-weight: bold;
+  color: white;
+  letter-spacing: 1px;
 }
 
 .nav-options button {
   margin-left: 1rem;
-  padding: 0.5rem 1rem;
+  padding: 0.7rem 1.2rem; /* Más padding para los botones */
   border: none;
   background: white;
-  color: #d87a9c;
+  color: var(--color-subtitle-orange); /* Color de acento */
   font-weight: bold;
-  border-radius: 5px;
+  border-radius: 25px; /* Más redondeado */
   cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, transform 0.2s;
+  box-shadow: 0 2px 4px var(--color-general-shadow);
 }
 
-/* PANEL FLOTANTE */
+.nav-options button:hover {
+  background-color: var(--color-subtitle-orange); /* Invertir colores al hover */
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px var(--color-card-shadow);
+}
+
+/* Contenido principal del dashboard */
+.contenido {
+  flex: 1; /* Permite que el contenido ocupe el espacio disponible */
+  width: 100%;
+  max-width: 1200px; /* Mismo ancho máximo que la navbar */
+  padding: 0 2rem 2rem 2rem;
+  box-sizing: border-box;
+}
+
+/* Bloques de Categoría */
+.bloque-categoria {
+  background-color: var(--color-card-bg-light); /* Fondo de tarjeta clara */
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1.5px solid var(--color-card-border);
+  box-shadow: 0 6px 12px var(--color-card-shadow);
+  margin-bottom: 2rem; /* Espacio entre categorías */
+}
+
+.bloque-categoria h3 {
+  border-left: 5px solid var(--color-subtitle-orange); /* Borde lateral con color de acento */
+  padding-left: 1rem;
+  color: var(--color-title-brown); /* Título con color de título */
+  margin-bottom: 1.5rem; /* Más espacio */
+  font-size: 1.8rem;
+}
+
+.grid-productos {
+  display: grid; /* Usar grid para un layout más robusto */
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); /* Columnas responsivas */
+  gap: 1.5rem; /* Más espacio entre productos */
+}
+
+/* Tarjetas de Producto */
+.card-producto {
+  background-color: white; /* Fondo blanco para cada producto */
+  border-radius: 10px;
+  border: 1px solid var(--color-card-border);
+  box-shadow: 0 4px 8px var(--color-general-shadow);
+  overflow: hidden; /* Asegura que la imagen no se desborde */
+  text-align: center;
+  display: flex; /* ¡Añadido para flexbox! */
+  flex-direction: column; /* ¡Añadido para flexbox! */
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card-producto:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px var(--color-card-shadow);
+}
+
+.card-producto img {
+  width: 100%;
+  height: 160px; /* Altura un poco mayor */
+  object-fit: cover;
+  display: block;
+  border-bottom: 1px solid var(--color-card-border); /* Separador entre imagen y info */
+}
+
+.card-producto h4 {
+  margin: 1rem 0 0.5rem 0; /* Más espacio superior */
+  font-size: 1.3em;
+  color: var(--color-text-brown-dark);
+}
+
+.card-producto .precio {
+  color: var(--color-subtitle-orange); /* Color de acento para el precio */
+  font-weight: bold;
+  font-size: 1.2em;
+  margin-bottom: 0.75rem;
+}
+
+.card-producto .descripcion,
+.card-producto .ingredientes {
+  font-size: 0.95rem; /* Un poco más grande */
+  color: var(--color-text-brown-light);
+  margin-bottom: 0.5rem;
+  padding: 0 0.8rem; /* Padding lateral para el texto */
+  /* --- Opcional: Para limitar líneas de texto y añadir elipsis --- */
+  /* white-space: normal; */
+  /* overflow: hidden; */
+  /* text-overflow: ellipsis; */
+  /* display: -webkit-box; */
+  /* -webkit-line-clamp: 3; /* Número de líneas que quieres mostrar */
+  /* -webkit-box-orient: vertical; */
+}
+
+.card-producto .ingredientes {
+  padding-bottom: 0.5rem;
+  flex-grow: 1; /* ¡Añadido para flexbox! Permite que ocupe el espacio antes de los botones */
+}
+
+/* Contenedor para los botones si quieres agruparlos y aplicar margin-top: auto */
+.card-producto .button-group {
+    display: flex;
+    flex-direction: column;
+    width: 100%; /* Ocupa el ancho completo */
+    padding: 1rem; /* Padding alrededor de los botones */
+    padding-top: 0; /* Ya tenemos padding en los botones */
+    margin-top: auto; /* ¡Añadido para flexbox! Empuja este grupo hacia abajo */
+    gap: 0.5rem; /* Espacio entre los botones */
+    box-sizing: border-box; /* Incluir padding en el ancho */
+}
+
+
+.card-producto button {
+  background-color: var(--color-subtitle-orange);
+  color: white;
+  border: none;
+  padding: 0.7rem 1.2rem;
+  border-radius: 8px; /* Más redondeado */
+  font-weight: bold;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  width: 100%; /* Ocupa el 100% del contenedor button-group */
+}
+
+.card-producto button:hover {
+  background-color: var(--color-title-brown);
+  transform: translateY(-2px);
+}
+
+.btn-eliminar {
+  background-color: var(--color-error); /* Rojo para eliminar */
+}
+
+.btn-eliminar:hover {
+  background-color: #cc4444; /* Rojo más oscuro al hover, si usas Sass/Less. Si no, un valor fijo */
+}
+
+/* Panel flotante (Overlay y Formularios) */
 .overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0,0,0,0.3);
+  background-color: rgba(0,0,0,0.5); /* Oscurecer más el fondo */
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999;
+  z-index: 1000; /* Asegura que esté por encima de todo */
+  backdrop-filter: blur(3px); /* Efecto de desenfoque */
 }
 
 .formulario-flotante {
-  background: white;
-  padding: 2rem;
-  border-radius: 10px;
-  max-width: 400px;
+  background: var(--color-card-bg-light); /* Fondo de tarjeta clara */
+  padding: 2.5rem; /* Más padding */
+  border-radius: 15px; /* Más redondeado */
+  max-width: 450px; /* Un poco más ancho */
   width: 90%;
   position: relative;
-  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 30px var(--color-card-shadow); /* Sombra más pronunciada */
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem; /* Más espacio entre elementos del formulario */
+  border: 1.5px solid var(--color-card-border);
+}
+
+.formulario-flotante h3 {
+  color: var(--color-title-brown);
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  text-align: center;
 }
 
 .formulario-flotante input,
 .formulario-flotante textarea,
 .formulario-flotante select {
-  padding: 0.75rem;
+  padding: 0.8rem 1rem;
   font-size: 1rem;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  resize: none;
+  border-radius: 8px; /* Más redondeado */
+  border: 1.5px solid var(--color-card-border);
+  color: var(--color-text-brown-dark);
+  background-color: white;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
 }
 
-.formulario-flotante button {
-  background-color: #d87a9c;
+.formulario-flotante input:focus,
+.formulario-flotante textarea:focus,
+.formulario-flotante select:focus {
+  border-color: var(--color-subtitle-orange);
+  box-shadow: 0 0 0 3px rgba(141, 92, 61, 0.2);
+}
+
+.formulario-flotante button[type="submit"] {
+  background-color: var(--color-subtitle-orange);
   color: white;
   border: none;
-  padding: 0.75rem;
+  padding: 0.9rem; /* Más padding */
   font-weight: bold;
-  font-size: 1rem;
-  border-radius: 5px;
+  font-size: 1.1rem;
+  border-radius: 10px; /* Más redondeado */
   cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.formulario-flotante button[type="submit"]:hover {
+  background-color: var(--color-title-brown);
+  transform: translateY(-2px);
 }
 
 .formulario-flotante .cerrar {
   position: absolute;
-  top: 10px;
+  top: 15px; /* Más espacio del borde */
   right: 15px;
   background: none;
   border: none;
-  font-size: 1.5rem;
-  color: #999;
+  font-size: 2rem; /* Más grande */
+  color: var(--color-text-brown-light);
   cursor: pointer;
+  transition: color 0.2s;
 }
 
-/* PRODUCTOS */
-.bloque-categoria {
-  margin-top: 2rem;
+.formulario-flotante .cerrar:hover {
+  color: var(--color-error);
 }
 
-.bloque-categoria h3 {
-  border-left: 5px solid #d87a9c;
-  padding-left: 1rem;
-  color: #333;
-  margin-bottom: 1rem;
-}
-
-.grid-productos {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.card-producto {
-  width: 220px;
-  background-color: #fff;
-  border-radius: 10px;
-  padding: 1rem;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-.card-producto img {
-  width: 100%;
-  height: 130px;
-  object-fit: cover;
-  border-radius: 5px;
-  margin-bottom: 0.5rem;
-}
-
-.card-producto h4 {
-  margin: 0.5rem 0;
-}
-
-.card-producto .precio {
-  color: #d87a9c;
-  font-weight: bold;
-  margin-bottom: 0.25rem;
-}
-
-.card-producto .descripcion,
-.card-producto .ingredientes {
-  font-size: 0.9rem;
-  color: #555;
-  margin-bottom: 0.25rem;
-}
-
-.card-producto button {
-  margin-top: 0.5rem;
-  background-color: #d87a9c;
-  color: white;
-  border: none;
-  padding: 0.4rem 1rem;
-  border-radius: 5px;
-  font-weight: bold;
-  cursor: pointer;
-}
-.btn-eliminar {
-  margin-top: 0.5rem;
-  background-color: #e65f5f;
-  color: white;
-  border: none;
-  padding: 0.4rem 1rem;
-  border-radius: 5px;
-  font-weight: bold;
-  cursor: pointer;
+/* Mensajes de estado (sin datos, carga, error) */
+.no-data-message,
+.loading-message,
+.error-message {
+  text-align: center;
+  margin-top: 3rem; /* Más espacio */
+  font-size: 1.2em;
+  color: var(--color-text-brown-light);
   width: 100%;
 }
 
-.btn-eliminar:hover {
-  background-color: #cc4444;
+.loading-message {
+  color: var(--color-subtitle-orange); /* Color de carga */
+}
+
+.error-message {
+  color: var(--color-error); /* Rojo para errores */
+  font-weight: bold;
+}
+
+
+/* Media Queries para Responsividad */
+@media (max-width: 1024px) {
+  .navbar, .contenido {
+    padding: 0.8rem 1.5rem; /* Ajuste de padding */
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .navbar .logo {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .nav-options {
+    width: 100%;
+    justify-content: center;
+    display: flex; /* Asegura que los botones estén en línea y centrados */
+    flex-wrap: wrap; /* Permite que los botones se envuelvan */
+    gap: 0.5rem; /* Espacio entre botones */
+  }
+
+  .nav-options button {
+    margin-left: 0; /* Eliminar margen para mejor control con gap */
+    flex-grow: 1; /* Permite que los botones crezcan */
+    max-width: unset; /* Reiniciar max-width */
+  }
+
+  .contenido {
+    padding: 1.5rem;
+  }
+
+  .grid-productos {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* Ajuste para móviles */
+    gap: 1rem;
+  }
+
+  .bloque-categoria h3 {
+    font-size: 1.5rem;
+  }
+
+  .formulario-flotante {
+    padding: 1.5rem;
+    gap: 0.75rem;
+  }
+
+  .formulario-flotante h3 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar .logo {
+    font-size: 1.5rem;
+  }
+  .nav-options button {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.9em;
+  }
+  .bloque-categoria h3 {
+    font-size: 1.3rem;
+  }
+  .card-producto img {
+    height: 120px;
+  }
+  .card-producto h4 {
+    font-size: 1.1em;
+  }
+  .card-producto .precio {
+    font-size: 1em;
+  }
+  .card-producto .descripcion,
+  .card-producto .ingredientes {
+    font-size: 0.85rem;
+  }
+  .card-producto button {
+    padding: 0.6rem 1rem;
+    font-size: 0.9em;
+  }
+  .formulario-flotante {
+    padding: 1rem;
+  }
+  .formulario-flotante h3 {
+    font-size: 1.3rem;
+  }
+  .formulario-flotante input,
+  .formulario-flotante textarea,
+  .formulario-flotante select {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.9em;
+  }
+  .formulario-flotante button[type="submit"] {
+    padding: 0.7rem;
+    font-size: 1em;
+  }
+  .formulario-flotante .cerrar {
+    font-size: 1.8rem;
+  }
 }
